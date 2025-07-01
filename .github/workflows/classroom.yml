@@ -1,11 +1,14 @@
 name: Autograding Tests
-'on':
-- push
-- repository_dispatch
+on:
+  - push
+  - repository_dispatch
+
 permissions:
   checks: write
   actions: read
   contents: read
+  pull-requests: write
+
 jobs:
   pre-commit:
     name: Run pre-commit hooks
@@ -32,7 +35,8 @@ jobs:
           setup-command: ""
           command: |
             OUTPUT=$(make test)
-            if [ $? -eq 0 ]; then
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 0 ]; then
               echo '{"name":"Main test", "score":10, "output":"'"$OUTPUT"'"}'
             else
               echo '{"name":"Main test", "score":0, "output":"'"$OUTPUT"'"}'
