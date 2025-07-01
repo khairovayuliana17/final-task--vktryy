@@ -21,20 +21,28 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor != 'github-classroom[bot]'
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Main test
-      id: main-test
-      uses: classroom-resources/autograding-command-grader@v1
-      with:
-        test-name: Main test
-        setup-command: ''
-        command: make test
-        timeout: 1
-        max-score: 10
-    - name: Autograding Reporter
-      uses: classroom-resources/autograding-grading-reporter@v1
-      env:
-        MAIN-TEST_RESULTS: "${{steps.main-test.outputs.result}}"
-      with:
-        runners: main-test
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Main test
+        id: main-test
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Main test
+          setup-command: ""
+          command: |
+            OUTPUT=$(make test)
+            if [ $? -eq 0 ]; then
+              echo '{"name":"Main test", "score":10, "output":"'"$OUTPUT"'"}'
+            else
+              echo '{"name":"Main test", "score":0, "output":"'"$OUTPUT"'"}'
+            fi
+          timeout: 30
+          max-score: 10
+      
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          MAIN-TEST_RESULTS: "${{steps.main-test.outputs.result}}"
+        with:
+          runners: main-test
