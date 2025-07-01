@@ -41,7 +41,7 @@ jobs:
             else
               echo '{"name":"Main test", "score":0, "output":"'"$OUTPUT"'"}'
             fi
-          timeout: 30
+          timeout: 1
           max-score: 10
       
       - name: Autograding Reporter
